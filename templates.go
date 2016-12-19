@@ -28,33 +28,8 @@ func NewTemplateManager() *TemplateManager {
 
 	templates := make(map[string]*template.Template)
 
-	templatesDir := "views"
-
-	views, err := AssetDir(templatesDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	viewsFiltered := make([]string, 0)
-	for _, view := range views {
-		if strings.HasSuffix(view, ".tmpl") {
-			viewsFiltered = append(viewsFiltered, view)
-		}
-	}
-
-	views = viewsFiltered
-
-	layouts, err := AssetDir(templatesDir + "/layouts")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	layoutsFiltered := make([]string, 0)
-	for _, layout := range layouts {
-		layoutsFiltered = append(layoutsFiltered, "layouts/"+layout)
-	}
-
-	layouts = layoutsFiltered
+	views := GetViews("", true)
+	layouts := GetViews("layouts", false)
 
 	// Generate our templates map from our layouts/ and includes/ directories
 	for _, view := range views {
@@ -103,7 +78,7 @@ func (templateManager TemplateManager) RenderView(w http.ResponseWriter, r *http
 		CurrentView: view,
 	}
 
-	return templateManager.RenderTemplate(w, view+".tmpl", viewData)
+	return templateManager.RenderTemplate(w, view + ".tmpl", viewData)
 }
 
 type View struct {
@@ -112,4 +87,30 @@ type View struct {
 	User        *User
 	CurrentView string
 	Data        interface{}
+}
+
+func GetViews(path string, ignoreLayout bool) []string {
+	templatesDir := "views"
+	if path != "" {
+		templatesDir += "/"
+	}
+
+	views, err := AssetDir(templatesDir + path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	viewsFiltered := make([]string, 0)
+	if path != "" {
+		path += "/"
+	}
+	for _, view := range views {
+		if strings.HasSuffix(view, ".tmpl") {
+			viewsFiltered = append(viewsFiltered, path + view)
+		} else if !ignoreLayout || !(path == "" && view == "layouts") {
+			viewsFiltered = append(viewsFiltered, GetViews(path + view, ignoreLayout)...)
+		}
+	}
+
+	return viewsFiltered
 }

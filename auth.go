@@ -78,9 +78,11 @@ func PostAuth(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			Password: string(hashedPassword),
 		}
 		db.Create(user)
+	} else {
+		templateManager.RenderView(w, r, "auth", nil, nil)
+		return
 	}
 
-	// Login
 
 	// Create token
 	tokenBytes := make([]byte, 32)
