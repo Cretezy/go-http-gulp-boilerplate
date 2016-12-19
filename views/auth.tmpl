@@ -1,0 +1,20 @@
+{{ define "title"}}Auth{{ end }}
+{{ define "content" }}
+<form action="/auth" method="POST">
+    <input placeholder="Username" name="username" type="text"/>
+    <input placeholder="Password" name="password" type="password"/>
+    <input type = "radio"
+           name = "type"
+           id = "login"
+           value = "login"
+           checked = "checked" />
+    <label for = "login">login</label>
+
+    <input type = "radio"
+           name = "type"
+           id = "register"
+           value = "register" />
+    <label for = "register">register</label>
+    <input type="submit" value="Submit" />
+</form>
+{{ end }}

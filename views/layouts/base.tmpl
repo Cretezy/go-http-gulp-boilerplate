@@ -1,0 +1,37 @@
+{{ define "base" }}
+<html>
+<head>
+    <title>Base - {{ template "title" . }}</title>
+    <link href="/static/build/index.css" rel="stylesheet"/>
+</head>
+<body>
+{{ range .Errors }}
+<div>{{ . }}</div>
+{{ end }}
+
+
+<ul class="topnav">
+    <input type='checkbox' id="mobile"/>
+    <li class="title"><a href="/">Base <label for="mobile" id="mobile-label">Menu</label></a></li>
+    <li><a class='{{ IsCurrentView .CurrentView "home" }}' href="/">Home</a></li>
+    {{ if .LoggedIn }}
+    <li class="dropdown right">
+        <a href="#" class="dropbtn">{{ .User.Username }}</a>
+        <div class="dropdown-content">
+            <a class='{{ IsCurrentView .CurrentView "account" }}' href="/account">Account</a>
+            <a href="/auth/logout">Logout</a>
+        </div>
+    </li>
+    {{ else }}
+    <li class="right"><a href="/auth">Login/Register</a></li>
+    {{ end }}
+</ul>
+
+<div class="container">
+    {{ template "content" . }}
+</div>
+
+<script src="/static/build/index.js"></script>
+</body>
+</html>
+{{ end }}

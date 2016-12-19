@@ -1,0 +1,8 @@
+.env
+test.db
+
+## Go
+bindata.go
+
+## Node
+node_modules
